@@ -1,0 +1,97 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+ARTICLE BANNER COMPONENT
+----------------------------------------------------------------------------------------------------------------------
+Shows the blog post image with blog post summary on blog post details page. The snippet automatically adjust the image positioning based on its aspect ratio.
+
+********************************************
+Supported parameters
+********************************************
+
+* show_date
+* show_author
+* show_comments_count
+* layout
+{%- endcomment -%}
+<style>
+  .container-video {
+    position: relative;
+    width: 100%;
+}
+.videoframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+</style>
+<div class="article-banner {% if layout == 'image_text_overlay' %}sm:justify-items-center sm:align-items-center{% endif %}">
+  <div class="article-banner__content text-custom">
+    {%- if article.tags.size > 0 -%}
+      <a href="{{ blog.url }}/tagged/{{ article.tags.first | handle }}" class="badge bold text-sm">{{- article.tags.first -}}</a>
+    {%- endif -%}
+
+    <h1 class="h0">{{- article.title -}}</h1>
+
+    <div class="article__meta text-sm">
+      {%- if show_date -%}
+        <p class="text-with-icon link-faded">
+          {%- render 'icon' with 'blog-date' -%} <time>{{- article.published_at | date: format: 'abbreviated_date' -}}</time>
+        </p>
+      {%- endif -%}
+
+      {%- if show_author -%}
+        <p class="text-with-icon link-faded">
+          {%- render 'icon' with 'blog-author' -%} {{- 'blog.post.written_by' | t: author: article.author -}}
+        </p>
+      {%- endif -%}
+
+      {%- if show_comments_count and article.comments_enabled? -%}
+        <a href="#blog-post-comments" class="text-with-icon link-faded">
+          {%- render 'icon' with 'blog-comment' -%}
+          {{- 'blog.comments.count' | t: count: article.comments_count -}}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+{%- capture class -%}container-video content-over-media aspect-video shadow-block rounded-lg {%- endcapture -%}
+  {%- if article_image != blank -%}
+    
+   
+        {%- if article.metafields.custom.lp_video_youtube_link_ != blank -%} 
+       <div class="{{ class }}">
+              <iframe src="https://www.youtube.com/embed/{{ article.metafields.custom.lp_video_youtube_link_ | replace: "https://www.youtube.com/watch?v=" , "" | replace: "https://youtu.be/", "" }}?enablejsapi=1&autoplay=1" class="js-youtube absolute videoframe" frameborder="0" allowfullscreen></iframe>
+        </div>
+          {%- else -%}
+            {%- if article.metafields.custom.lp_video != blank %}
+                 
+                 {% assign getFile = article.metafields.custom.lp_video %}
+                  <div class="{{ class }}">
+                     <iframe src="{{  getFile | file_url | remove: getFile }}" class="video absolute inset-0 w-full h-full scale-[1.01]" frameborder="0" allowfullscreen></iframe>
+                   </div>
+            {%- else -%}
+                   {%- capture sizes -%}{{ article_image.width }}px{%- endcapture -%}
+                    <div class="article-banner__image">
+                      {{- article_image | image_url: width: 1500 | image_tag: loading: 'lazy', sizes: sizes , widths: '200,300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200' -}}
+                    </div>
+              {%- endif -%}
+        {%- endif -%}
+    
+   {%- else -%}
+    <div class="{{ class }}">
+        {%- if article.metafields.custom.lp_video_youtube_link_ != blank -%} 
+              <iframe src="https://www.youtube.com/embed/{{ article.metafields.custom.lp_video_youtube_link_ | replace: "https://www.youtube.com/watch?v=" , "" | replace: "https://youtu.be/", "" }}?enablejsapi=1&autoplay=1" class="js-youtube absolute videoframe" frameborder="0" allowfullscreen></iframe>
+        {%- else -%}
+            {%- if article.metafields.custom.lp_video != blank %}
+                 
+                 {% assign getFile = article.metafields.custom.lp_video %}
+                 <iframe src="{{  getFile | file_url | remove: getFile }}" class="video absolute inset-0 w-full h-full scale-[1.01]" frameborder="0" allowfullscreen></iframe>
+                  
+            {%- else -%}
+                   
+              {%- endif -%}
+        {%- endif -%}
+    </div>
+  {%- endif -%}
+</div>

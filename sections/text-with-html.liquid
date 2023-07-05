@@ -1,0 +1,261 @@
+{%- render 'section-spacing-collapsing' -%}
+
+{%- assign text_position = section.settings.text_position -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --section-stack-intro: {% if text_position == 'center' %}66.6667%{% elsif section.settings.contact_form_size == 'small' %}50%{% else %}41.6667%{% endif %};
+    --section-stack-main: {% if section.settings.contact_form_size == 'small' %}50%{% else %}58.3334%{% endif %};
+  
+    {%- if section.settings.allow_transparent_header -%}
+      margin-block-start: calc(-1 * var(--header-height) * var(--section-is-first));
+    {%- endif -%}
+    }
+</style>
+
+<div {% render 'section-properties' %}>
+  {%- assign text_position = section.settings.text_position -%}
+
+  <div style="{%- if section.settings.allow_transparent_header -%}padding-top:5rem;{%- endif -%}" class="section-stack {% if text_position != 'center' %}section-stack--horizontal{% else %}section-stack--center{% endif %} {% if text_position == 'end' %}section-stack--reverse{% endif %}" {% if section.settings.allow_transparent_header %}allow-transparent-header{% endif %}>
+    {%- capture content -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="bold">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.title != blank -%}
+                <p class="{{ section.settings.heading_tag }}" data-sequence="heading">
+                  {%- render 'styled-text', content: section.settings.title, apparition_effect: true -%}
+                </p>
+            {%- endif -%}
+
+      {{- section.settings.content -}}
+    {%- endcapture -%}
+
+    {%- if content != blank -%}
+      <div class="section-stack__intro">
+        <div class="prose {% if text_position == 'center' %}text-center{% endif %}">
+          {{- content -}}
+      <br>
+          {%- if section.settings.bullet-one != blank -%}
+          <a style="{%- if section.settings.bullet-one-url -%}text-decoration: underline !important;{%- endif -%}" {%- if section.settings.bullet-one-url -%} href="{{ section.settings.bullet-one-url }}"{%- endif -%}>
+          <div class="text-with-icon"><span class="circle-chevron group-hover:colors" style="color:{{ section.settings.bullet_color }}!important;padding:8px;">{%- render 'icon' with 'chevron-right-small' -%}</span>{{- section.settings.bullet-one -}}</div></a>
+          {%- endif -%}
+        
+          {%- if section.settings.bullet-two != blank -%}
+          <a style="{%- if section.settings.bullet-two-url -%}text-decoration: underline !important;{%- endif -%}" {%- if section.settings.bullet-two-url -%} href="{{ section.settings.bullet-two-url }}"{%- endif -%}>
+          <div class="text-with-icon"><span class="circle-chevron group-hover:colors" style="margin-top: 10px;color:{{ section.settings.bullet_color }}!important;padding:8px;">{%- render 'icon' with 'chevron-right-small' -%}</span>{{- section.settings.bullet-two -}}</div></a>
+          {%- endif -%}
+        
+          {%- if section.settings.bullet-three != blank -%}
+          <a style="{%- if section.settings.bullet-three-url -%}text-decoration: underline !important;{%- endif -%}" {%- if section.settings.bullet-three-url -%} href="{{ section.settings.bullet-three-url }}"{%- endif -%}>
+          <div class="text-with-icon"><span class="circle-chevron group-hover:colors" style="margin-top: 10px;color:{{ section.settings.bullet_color }}!important;padding:8px;">{%- render 'icon' with 'chevron-right-small' -%}</span>{{- section.settings.bullet-three -}}</div></a>
+          {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+    
+    <div class="section-stack__main">
+      <div {% render 'surface', class: 'contact-form rounded', background: section.settings.contact_background, text_color: section.settings.contact_text_color, background_fallback: 'bg-secondary' %}>
+        {{ section.settings.html }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Text with HTML",
+  "class": "shopify-section--contact",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_transparent_header",
+      "label": "Allow transparent header",
+      "info": "This setting only applies when this section is the first one.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Contact Us"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Do you have any question?"
+    },
+    {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "Heading size",
+          "options": [
+            {
+              "value": "h0",
+              "label": "H0"
+            },
+            {
+              "value": "h1",
+              "label": "H1"
+            },
+            {
+              "value": "h2",
+              "label": "H2"
+            },
+            {
+              "value": "h3",
+              "label": "H3"
+            },
+            {
+              "value": "h4",
+              "label": "H4"
+            },
+            {
+              "value": "h5",
+              "label": "H5"
+            },
+            {
+              "value": "h6",
+              "label": "H6"
+            }
+          ],
+          "default": "h0"
+        },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content"
+    },
+    {
+      "type": "html",
+      "id": "html",
+      "label": "HTML",
+      "default": "<p style=\"text-align: center\">Write or copy/paste HTML code</p>"
+    },
+    {
+      "type": "text",
+      "id": "bullet-one",
+      "label": "Bullet point 1"
+    },
+    {
+      "type": "url",
+      "id": "bullet-one-url",
+      "label": "Bullet point 1 link"
+    },
+    {
+      "type": "text",
+      "id": "bullet-two",
+      "label": "Bullet point 2"
+    },
+    {
+      "type": "url",
+      "id": "bullet-two-url",
+      "label": "Bullet point 2 link"
+    },
+    {
+      "type": "text",
+      "id": "bullet-three",
+      "label": "Bullet point 3"
+    },
+    {
+      "type": "url",
+      "id": "bullet-three-url",
+      "label": "Bullet point 3 link"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "options": [
+        {
+          "value": "start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "end",
+          "label": "Right"
+        }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "header",
+      "content": "Section colors",
+      "info": "Gradient replaces solid colors when set."
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "bullet_color",
+      "label": "Bullet point color"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "header",
+      "content": "Contact block colors",
+      "info": "Gradient replaces solid colors when set."
+    },
+    {
+      "type": "color",
+      "id": "contact_background",
+      "label": "Background"
+    },
+    {
+      "type": "color",
+      "id": "contact_text_color",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text with HTML",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}
